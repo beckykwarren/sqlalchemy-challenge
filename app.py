@@ -1,6 +1,6 @@
 # 
 import numpy as np
-
+import statistics
 import sqlalchemy
 from sqlalchemy.ext.automap import automap_base
 from sqlalchemy.orm import Session
@@ -82,8 +82,45 @@ def tobs():
 
 # Define variable routes
 @app.route("/api/v1.0/<start>/<end>")
-def dates():
-    return ("some stuff")
+def dates_closed(start,end):
+    session = Session(engine)
+    results = session.query(Measurement.tobs).filter(and_(func.date(Measurement.date) >= start),func.date(Measurement.date) <= end)
+    session.close()
+
+    temp_list = []
+    for tobs in results:
+        temp_list.append(tobs)
+    
+    tmax = max(temp_list)
+    tmin = min(temp_list)
+    #tavg = statistics.mean(temp_list)
+    
+    range_dict = {"TMAX":tmax, "TMIN":tmin }
+    # "TAVG":tavg,
+
+    return jsonify(range_dict)
+
+
+@app.route("/api/v1.0/<start>")
+def dates_open(start):
+    session = Session(engine)
+    results = session.query(Measurement.tobs).filter(and_(func.date(Measurement.date) >= start),func.date(Measurement.date) <= '2017-08-23')
+    session.close()
+
+    temp_list = []
+    for tobs in results:
+        temp_list.append(tobs)
+    
+    tmax = max(temp_list)
+    tmin = min(temp_list)
+    #tavg = statistics.mean(temp_list)
+    
+    range_dict = {"TMAX":tmax, "TMIN":tmin }
+    # "TAVG":tavg,
+
+    return jsonify(range_dict)
+
+
 
 # Define main behavior
 if __name__ == "__main__":

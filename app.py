@@ -91,12 +91,11 @@ def dates_closed(start,end):
     for tobs in results:
         temp_list.append(tobs)
     
-    tmax = max(temp_list)
-    tmin = min(temp_list)
-    #tavg = statistics.mean(temp_list)
+    tmax = max(temp_list)[0]
+    tmin = min(temp_list)[0]
+    tavg = statistics.mean(temp_list[0])
     
-    range_dict = {"TMAX":tmax, "TMIN":tmin }
-    # "TAVG":tavg,
+    range_dict = {"TMAX":tmax, "TAVG":tavg, "TMIN":tmin }
 
     return jsonify(range_dict)
 
